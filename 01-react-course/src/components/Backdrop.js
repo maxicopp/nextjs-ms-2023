@@ -1,5 +1,5 @@
-function Backdrop() {
-  return <div className="backdrop" />;
+function Backdrop({ onClick }) {
+  return <div className="backdrop" onClick={onClick} />;
 }
 
 export default Backdrop;

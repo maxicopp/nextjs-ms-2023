@@ -10,6 +10,10 @@ function Todo({ text }) {
     setModalIsOpen(true);
   }
 
+  function closeModalHandler() {
+    setModalIsOpen(false);
+  }
+
   return (
     <div className="card">
       <h2>{text}</h2>
@@ -18,8 +22,10 @@ function Todo({ text }) {
           Delete
         </button>
       </div>
-      {modalIsOpen && <Modal />}
-      {modalIsOpen && <Backdrop />}
+      {modalIsOpen && (
+        <Modal onCancel={closeModalHandler} onConfirm={closeModalHandler} />
+      )}
+      {modalIsOpen && <Backdrop onClick={closeModalHandler} />}
     </div>
   );
 }

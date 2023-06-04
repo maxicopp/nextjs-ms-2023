@@ -2,7 +2,13 @@ import NewMeetupForm from '../components/meetups/NewMeetupForm';
 
 function NewMeetupPage() {
   function addMeetupHandler(meetupData) {
-    console.log('Add meetup: ', meetupData);
+    fetch(process.env.REACT_APP_API_URL, {
+      method: 'POST',
+      body: JSON.stringify(meetupData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 
   return (

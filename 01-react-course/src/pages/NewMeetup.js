@@ -1,6 +1,10 @@
+import { useHistory } from 'react-router-dom';
+
 import NewMeetupForm from '../components/meetups/NewMeetupForm';
 
 function NewMeetupPage() {
+  const history = useHistory();
+
   function addMeetupHandler(meetupData) {
     fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
@@ -8,6 +12,8 @@ function NewMeetupPage() {
       headers: {
         'Content-Type': 'application/json',
       },
+    }).then(() => {
+      history.replace('/');
     });
   }
 

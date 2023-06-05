@@ -8,9 +8,30 @@ export const FavoritesContext = createContext({
 function FavoritesContextProvider({ children }) {
   const [userFavorites, setUserFavorites] = useState([]);
 
+  function addFavoriteHandler(favoriteMeetup) {
+    setUserFavorites((prevUserFavorites) => {
+      return prevUserFavorites.concat(favoriteMeetup);
+    });
+  }
+
+  function removeFavoriteHandler(favoriteMeetupId) {
+    setUserFavorites((prevUserFavorites) => {
+      return prevUserFavorites.filter(
+        (meetup) => meetup.id !== favoriteMeetupId
+      );
+    });
+  }
+
+  function itemIsFavoriteHandler(meetupId) {
+    return userFavorites.some((meetup) => meetup.id === meetupId);
+  }
+
   const context = {
     favorites: userFavorites,
     totalFavorites: userFavorites.length,
+    addFavorite: addFavoriteHandler,
+    removeFavorite: removeFavoriteHandler,
+    itemIsFavorite: itemIsFavoriteHandler,
   };
 
   return (

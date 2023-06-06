@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 export const FavoritesContext = createContext({
   favorites: [],
@@ -9,39 +9,47 @@ export const FavoritesContext = createContext({
 });
 
 function FavoritesContextProvider({ children }) {
-  const [userFavorites, setUserFavorites] = useState([]);
+  const [favorites, setFavorites] = useLocalStorage('favorites', []);
 
-  function addFavoriteHandler(favoriteMeetup) {
-    setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.concat(favoriteMeetup);
-    });
+  function addFavoriteHandler(newFavorite) {
+    setFavorites((prevFavorites) => [...prevFavorites, newFavorite]);
   }
 
-  function removeFavoriteHandler(favoriteMeetupId) {
-    setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.filter(
-        (meetup) => meetup.id !== favoriteMeetupId
-      );
-    });
+  function removeFavoriteHandler(favoriteId) {
+    setFavorites((prevFavorites) =>
+      prevFavorites.filter((favorite) => favorite.id !== favoriteId)
+    );
   }
 
-  function itemIsFavoriteHandler(meetupId) {
-    return userFavorites.some((meetup) => meetup.id === meetupId);
-  }
+  const itemIsFavoriteHandler = (meetupId) =>
+    favorites.some((favorite) => favorite.id === meetupId);
 
-  const context = {
-    favorites: userFavorites,
-    totalFavorites: userFavorites.length,
+  const contextValue = {
+    favorites,
+    totalFavorites: favorites.length,
     addFavorite: addFavoriteHandler,
     removeFavorite: removeFavoriteHandler,
     itemIsFavorite: itemIsFavoriteHandler,
   };
 
   return (
-    <FavoritesContext.Provider value={context}>
+    <FavoritesContext.Provider value={contextValue}>
       {children}
     </FavoritesContext.Provider>
   );
+}
+
+function useLocalStorage(key, defaultValue) {
+  const [value, setValue] = useState(() => {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : defaultValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
 }
 
 export default FavoritesContextProvider;

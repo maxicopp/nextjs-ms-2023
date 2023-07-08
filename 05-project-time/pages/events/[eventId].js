@@ -5,16 +5,28 @@ import EventSummary from '../../components/event-detail/event-summary';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventContent from '../../components/event-detail/event-content';
 import ErrorAlert from '../../components/ui/error-alert';
-import { getEventById, getAllEventIds } from '../../helpers/api-util';
+import {
+  getEventById,
+  getAllEventIds,
+  getFeaturedEvents,
+} from '../../helpers/api-util';
 
 function EventDetailPage({ event }) {
   const router = useRouter();
 
   if (router.isFallback) {
     return (
-      <ErrorAlert>
+      <div className="center">
         <p>Loading...</p>
-      </ErrorAlert>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="center">
+        <p>No event found!</p>
+      </div>
     );
   }
 
@@ -35,15 +47,13 @@ function EventDetailPage({ event }) {
 }
 
 export async function getStaticPaths() {
-  const eventIds = await getAllEventIds();
+  const events = await getFeaturedEvents();
 
-  const paths = eventIds.map((eventId) => ({
-    params: { eventId },
-  }));
+  const paths = events.map((event) => ({ params: { eventId: event.id } }));
 
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
   };
 }
 
@@ -66,6 +76,7 @@ export async function getStaticProps(context) {
     props: {
       event,
     },
+    revalidate: 30,
   };
 }
 

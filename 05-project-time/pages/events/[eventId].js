@@ -4,12 +4,7 @@ import { useRouter } from 'next/router';
 import EventSummary from '../../components/event-detail/event-summary';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventContent from '../../components/event-detail/event-content';
-import ErrorAlert from '../../components/ui/error-alert';
-import {
-  getEventById,
-  getAllEventIds,
-  getFeaturedEvents,
-} from '../../helpers/api-util';
+import { getEventById, getFeaturedEvents } from '../../helpers/api-util';
 
 function EventDetailPage({ event }) {
   const router = useRouter();

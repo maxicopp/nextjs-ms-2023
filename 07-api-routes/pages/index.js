@@ -5,15 +5,23 @@ function HomePage() {
   const emailInputRef = useRef();
   const feedbackInputRef = useRef();
 
-  function submitFormHandler(event) {
+  async function submitFormHandler(event) {
     event.preventDefault();
     const enteredEmail = emailInputRef.current.value;
     const enteredFeedback = feedbackInputRef.current.value;
 
-    console.log(enteredEmail, enteredFeedback);
+    const response = await fetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify({ email: enteredEmail, text: enteredFeedback }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    emailInputRef.current.value = '';
-    feedbackInputRef.current.value = '';
+    if (response.status === 201) {
+      emailInputRef.current.value = '';
+      feedbackInputRef.current.value = '';
+    }
   }
 
   return (

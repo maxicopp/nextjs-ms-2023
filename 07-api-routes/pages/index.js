@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styles from './HomePage.module.css';
 
 function HomePage() {
+  const [feedbackItems, setFeedbackItems] = useState([]);
   const emailInputRef = useRef();
   const feedbackInputRef = useRef();
 
@@ -9,6 +10,10 @@ function HomePage() {
     event.preventDefault();
     const enteredEmail = emailInputRef.current.value;
     const enteredFeedback = feedbackInputRef.current.value;
+
+    if (!enteredEmail || !enteredFeedback) {
+      return;
+    }
 
     const response = await fetch('/api/feedback', {
       method: 'POST',
@@ -22,6 +27,13 @@ function HomePage() {
       emailInputRef.current.value = '';
       feedbackInputRef.current.value = '';
     }
+  }
+
+  async function loadFeedbackHandler(event) {
+    event.preventDefault();
+    const response = await fetch('/api/feedback');
+    const data = await response.json();
+    setFeedbackItems(data.feedback);
   }
 
   return (
@@ -52,6 +64,19 @@ function HomePage() {
         </div>
         <button className={styles.button}>Send Feedback</button>
       </form>
+      <hr />
+      <button className={styles.button} onClick={loadFeedbackHandler}>
+        Load Feedback
+      </button>
+      {feedbackItems.length > 0 && (
+        <ul className={styles['feedback-list']}>
+          {feedbackItems.map(({ id, email, feedbackText }) => (
+            <li key={id}>
+              {email} - {feedbackText}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

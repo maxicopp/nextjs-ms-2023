@@ -2,11 +2,11 @@ const { v4: uuidv4 } = require('uuid');
 import fs from 'fs';
 import path from 'path';
 
-function buildFeedbackPath() {
+export function buildFeedbackPath() {
   return path.join(process.cwd(), 'data', 'feedback.json');
 }
 
-function extractFeedbackData() {
+export function extractFeedbackData() {
   const filePath = buildFeedbackPath();
   const fileData = fs.readFileSync(filePath);
   const data = JSON.parse(fileData);

@@ -1,4 +1,4 @@
-import { extractFeedbackData } from './feedback';
+import { extractFeedbackData } from '.';
 
 function handler(req, res) {
   const feedbackId = req.query.feedbackId;
@@ -7,7 +7,7 @@ function handler(req, res) {
     (feedback) => feedback.id === feedbackId
   );
 
-  res.status(200).json({ feedback: selectedFeedback });
+  res.status(selectedFeedback ? 200 : 404).json({ feedback: selectedFeedback });
 }
 
 export default handler;

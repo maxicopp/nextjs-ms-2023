@@ -6,7 +6,7 @@ function FeedbackPage(props) {
   const [feedbackData, setFeedbackData] = useState();
 
   async function loadFeedbackHandler(id) {
-    const response = await fetch(`/api/${id}`);
+    const response = await fetch(`/api/feedback/${id}`);
     const data = await response.json();
     setFeedbackData(data.feedback);
   }

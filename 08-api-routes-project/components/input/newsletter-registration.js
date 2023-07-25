@@ -1,25 +1,28 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import classes from './newsletter-registration.module.css';
 
 function NewsletterRegistration() {
-  const [email, setEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const emailInputRef = useRef();
 
-  function registrationHandler(event) {
+  async function registrationHandler(event) {
     event.preventDefault();
 
-    if (!isValidEmail) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const enteredEmail = emailInputRef.current.value;
+
+    if (!emailPattern.test(enteredEmail)) {
       return;
     }
 
-    // TODO: send valid data to API
-    console.log({ email });
-  }
-
-  function emailChangeHandler(event) {
-    setEmail(event.target.value);
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setIsValidEmail(emailPattern.test(event.target.value));
+    const response = await fetch('/api/newsletter', {
+      method: 'POST',
+      body: JSON.stringify({ email: enteredEmail }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    console.log(data);
   }
 
   return (
@@ -32,8 +35,7 @@ function NewsletterRegistration() {
             id="email"
             placeholder="Your email"
             aria-label="Your email"
-            onChange={emailChangeHandler}
-            value={email}
+            ref={emailInputRef}
           />
           <button>Register</button>
         </div>

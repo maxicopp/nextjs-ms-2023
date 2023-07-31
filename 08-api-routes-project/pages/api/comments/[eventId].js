@@ -1,59 +1,55 @@
 import { MongoClient } from 'mongodb';
 
-async function handler(req, res) {
+async function handlePostRequest(req, res, db) {
+  const { email, name, text } = req.body;
+
+  if (
+    !email ||
+    !email.includes('@') ||
+    !name ||
+    name.trim() === '' ||
+    !text ||
+    text.trim() === ''
+  ) {
+    res.status(422).json({ message: 'Invalid input.' });
+    return;
+  }
+
   const eventId = req.query.eventId;
 
-  const client = await MongoClient.connect(process.env.MONGODB_URL);
+  const newComment = {
+    email,
+    name,
+    text,
+    eventId,
+  };
 
+  const commentsCollection = db.collection('comments');
+
+  const result = await commentsCollection.insertOne(newComment);
+  console.log(result);
+
+  newComment.id = result.insertedId.toString();
+
+  res.status(201).json({ message: 'Added comment.', comment: newComment });
+}
+
+async function handleGetRequest(req, res, db) {
+  const commentsCollection = db.collection('comments');
+
+  const comments = await commentsCollection.find().sort({ _id: -1 }).toArray();
+
+  res.status(200).json({ comments });
+}
+
+async function handler(req, res) {
+  const client = await MongoClient.connect(process.env.MONGODB_URL);
   const db = client.db();
 
   if (req.method === 'POST') {
-    const { email, name, text } = req.body;
-
-    if (
-      !email ||
-      !email.includes('@') ||
-      !name ||
-      name.trim() === '' ||
-      !text ||
-      text.trim() === ''
-    ) {
-      res.status(422).json({ message: 'Invalid input.' });
-      return;
-    }
-
-    const newComment = {
-      email,
-      name,
-      text,
-      eventId,
-    };
-
-    const eventsCollection = db.collection('comments');
-
-    const result = await eventsCollection.insertOne(newComment);
-    console.log(result);
-
-    newComment.id = result.insertedId.toString();
-
-    res.status(201).json({ message: 'Added comment.', comment: newComment });
-  }
-
-  if (req.method === 'GET') {
-    const dummyList = [
-      {
-        id: 'c1',
-        name: 'Max',
-        text: 'A first comment!',
-      },
-      {
-        id: 'c2',
-        name: 'Manu',
-        text: 'A second comment!',
-      },
-    ];
-
-    res.status(200).json({ comments: dummyList });
+    await handlePostRequest(req, res, db);
+  } else if (req.method === 'GET') {
+    await handleGetRequest(req, res, db);
   }
 
   client.close();

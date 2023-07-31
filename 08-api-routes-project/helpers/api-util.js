@@ -1,7 +1,7 @@
+const FIREBASE_URL = process.env.NEXT_PUBLIC_FIREBASE_URL;
+
 export async function getAllEvents() {
-  const response = await fetch(
-    'https://nextjs-course-56c57-default-rtdb.firebaseio.com/events.json'
-  );
+  const response = await fetch(FIREBASE_URL);
   const data = await response.json();
 
   const events = [];

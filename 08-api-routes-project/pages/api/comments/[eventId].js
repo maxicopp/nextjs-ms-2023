@@ -1,7 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+import { MongoClient } from 'mongodb';
 
-function handler(req, res) {
+async function handler(req, res) {
   const eventId = req.query.eventId;
+
+  const client = await MongoClient.connect(process.env.MONGODB_URL);
+
+  const db = client.db();
 
   if (req.method === 'POST') {
     const { email, name, text } = req.body;
@@ -19,13 +23,19 @@ function handler(req, res) {
     }
 
     const newComment = {
-      id: uuidv4(),
       email,
       name,
       text,
+      eventId,
     };
 
-    console.log(newComment);
+    const eventsCollection = db.collection('comments');
+
+    const result = await eventsCollection.insertOne(newComment);
+    console.log(result);
+
+    newComment.id = result.insertedId.toString();
+
     res.status(201).json({ message: 'Added comment.', comment: newComment });
   }
 
@@ -45,6 +55,8 @@ function handler(req, res) {
 
     res.status(200).json({ comments: dummyList });
   }
+
+  client.close();
 }
 
 export default handler;

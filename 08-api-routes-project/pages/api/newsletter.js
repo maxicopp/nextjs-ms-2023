@@ -13,7 +13,7 @@ async function handler(req, res) {
 
     const db = client.db();
 
-    const emailsCollection = db.collection('emails');
+    const emailsCollection = db.collection('newsletter');
 
     const result = await emailsCollection.insertOne({
       email: userEmail,

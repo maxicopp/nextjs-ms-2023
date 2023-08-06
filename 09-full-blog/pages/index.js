@@ -1,8 +1,13 @@
+import { Fragment } from 'react';
+import Hero from '../components/home-page/hero';
+import FeaturedPosts from '../components/home-page/fetured-posts';
+
 function HomePage() {
   return (
-    <div>
-      <h1>Home Page</h1>
-    </div>
+    <Fragment>
+      <Hero />
+      <FeaturedPosts />
+    </Fragment>
   );
 }
 

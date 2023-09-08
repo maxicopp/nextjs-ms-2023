@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import classes from './auth-form.module.css';
+import { signIn } from 'next-auth/client';
 
 async function createUser(email, password) {
   const response = await fetch('/api/auth/signup', {
@@ -31,12 +32,26 @@ function AuthForm() {
   async function submitHandler(event) {
     event.preventDefault();
 
-    if (isLogin) {
-      // TODO: Login
-    } else {
-      const enteredEmail = emailInputRef.current.value;
-      const enteredPassword = passwordInputRef.current.value;
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
 
+    if (isLogin) {
+      try {
+        const result = await signIn('credentials', {
+          redirect: false,
+          email: enteredEmail,
+          password: enteredPassword,
+        });
+
+        if (!result.error) {
+          console.log(result);
+        }
+      } catch (error) {
+        console.log(error);
+
+        return;
+      }
+    } else {
       if (
         !enteredEmail ||
         !enteredEmail.includes('@') ||

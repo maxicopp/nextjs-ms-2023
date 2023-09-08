@@ -1,9 +1,10 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import ConnectToDatabase from '../../../lib/db';
-import verifyPassword from '../../../lib/auth';
+import { verifyPassword } from '../../../lib/auth';
+import { ConnectToDatabase } from '../../../lib/db';
 
 export default NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     jwt: true,
   },

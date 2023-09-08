@@ -1,5 +1,5 @@
-import hashPassword from '../../../lib/auth';
-import ConnectToDatabase from '../../../lib/db';
+import { hashPassword } from '../../../lib/auth';
+import { ConnectToDatabase } from '../../../lib/db';
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -36,7 +36,7 @@ async function handler(req, res) {
     .collection('users')
     .insertOne({ email, password: hashedPassword });
 
-  res.status(201).json({ message: 'User created!' });
+  res.status(201).json({ message: 'User created!', userId: result.insertedId });
   client.close();
 }
 

@@ -26,5 +26,6 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'no-undef': ['error', { typeof: true }],
     'react/prop-types': 'off',
+    'no-unused-vars': 'error',
   },
 };
